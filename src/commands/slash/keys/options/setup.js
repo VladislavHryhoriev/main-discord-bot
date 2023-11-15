@@ -1,37 +1,37 @@
 const { client } = require('../../../../mongodb/setupClient');
+const { deleteKey } = require('../utils/deleteKey');
+const { getFile } = require('../utils/getFile');
 
 let timeoutTimer;
 let intervalTimer;
 
-const sendKey = async (channel) => {
+const sendKeyInChat = async (channel) => {
 	try {
-		await client.connect();
-		const db = client.db('csgo-keys').collection('keys');
+		const { fileData } = getFile();
 
-		if ((await db.countDocuments()) > 0) {
-			key = await db.findOne().then((item) => item.key);
+		console.log(fileData.length);
 
-			channel.send(key);
-
-			await db.deleteOne({ key: key });
+		if (fileData.length - 1 > 0) {
+			const key = fileData[fileData.length - 1];
+			console.log(key);
+			await channel.send(`${key}`);
+			deleteKey();
 		} else {
-			channel.send('Пустая база, раздача остановлена');
+			await channel.send('Пустая база, раздача остановлена');
 			clearTimers();
 		}
 	} catch (e) {
 		console.log(e);
-	} finally {
-		await client.close();
 	}
 };
 
 const scheduleNextRun = (interaction, channel) => {
 	// Устанавливаем таймер для следующего запуска через 24 часа
 	timeoutTimer = setTimeout(() => {
-		sendKey(interaction, channel);
+		sendKeyInChat(interaction, channel);
 
 		// const timer = setInterval(() => sendKey(), 24 * 60 * 60 * 1000);
-		intervalTimer = setInterval(() => sendKey(channel), 5000);
+		intervalTimer = setInterval(() => sendKeyInChat(channel), 5000);
 	}, timeUntilNextRun(interaction));
 };
 
@@ -55,8 +55,8 @@ const timeUntilNextRun = (interaction) => {
 };
 
 const setup = async (interaction, channel) => {
-	// sendKey(channel);
 	scheduleNextRun(interaction, channel);
+
 	await interaction.reply({
 		content: `Раздача запущена`,
 		ephemeral: true,

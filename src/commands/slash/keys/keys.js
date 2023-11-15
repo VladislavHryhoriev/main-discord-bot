@@ -5,12 +5,14 @@ const {
 	ChannelType,
 } = require('discord.js');
 
+const ExtendedClient = require('../../../class/ExtendedClient');
+
 const { setup } = require('./options/setup');
 const { addKeys } = require('./options/add');
-const { deactive } = require('./options/deactive');
-const { cleardb } = require('./options/cleardb');
+const { list } = require('./options/list');
+const { clearKeys } = require('./options/clearKeys');
+const { deleteKey } = require('./utils/deleteKey');
 
-const ExtendedClient = require('../../../class/ExtendedClient');
 const allowedUserIds = ['425759039784484898', '324156252081094657'];
 
 module.exports = {
@@ -18,6 +20,7 @@ module.exports = {
 		.setName('keys')
 		.setDescription('Запустить отправку ключей каждые 24 часа')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+
 		.addSubcommand((subcommand) =>
 			subcommand
 				.setName('setup')
@@ -58,8 +61,13 @@ module.exports = {
 		)
 
 		.addSubcommand((subcommand) =>
-			subcommand.setName('deactive').setDescription('Выключить раздачу')
+			subcommand.setName('list').setDescription('Показать все ключи')
 		)
+
+		.addSubcommand((subcommand) =>
+			subcommand.setName('delete').setDescription('Удалить один ключ')
+		)
+
 		.addSubcommand((subcommand) =>
 			subcommand.setName('clear').setDescription('Удалить все ключи')
 		),
@@ -78,15 +86,23 @@ module.exports = {
 				const id = interaction.options.getChannel('channel').id;
 				const channel = client.channels.cache.get(id);
 
-				await setup(interaction, channel);
+				setup(interaction, channel);
 			}
 
-			if (interaction.options.getSubcommand() === 'deactive') {
-				deactive(interaction);
+			if (interaction.options.getSubcommand() === 'list') {
+				list(interaction);
 			}
+
+			if (interaction.options.getSubcommand() === 'delete') {
+				deleteKey(interaction);
+			}
+
+			// if (interaction.options.getSubcommand() === 'deactive') {
+			// 	deactive(interaction);
+			// }
 
 			if (interaction.options.getSubcommand() === 'clear') {
-				cleardb(interaction);
+				clearKeys(interaction);
 			}
 		} else {
 			interaction.reply({ content: 'Недостаточно прав', ephemeral: true });

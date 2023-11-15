@@ -32,9 +32,10 @@ module.exports = class extends Client {
 			presence: {
 				activities: [
 					{
-						name: 'Counter Strike: Global Offensive',
-						type: ActivityType.Playing,
-						state: 'Playing in Counter Strike: Global Offensive',
+						name: 'Counter-Strike 3',
+						type: ActivityType.Competing,
+						state: '...',
+						url: 'https://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/730/f75dd04fa12445a8ec43be65fa16ff1b8d2bf82e.jpg',
 					},
 				],
 			},

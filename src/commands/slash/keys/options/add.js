@@ -1,29 +1,36 @@
-const { client } = require('../../../../mongodb/setupClient');
+const fs = require('fs');
+const { getFile } = require('../utils/getFile');
 
 const addKeys = async (interaction) => {
-	const file = interaction.options.getAttachment('keys');
+	const attachment = interaction.options.getAttachment('keys');
 
 	try {
-		const response = await fetch(file.url).then((text) => text.text());
-		const arr = response.split('\r\n');
+		const response = await fetch(attachment.url).then((data) => data.text());
+		const attachmentData = response.split('\r\n');
+		const { fileData, filePath } = getFile();
 
-		await client.connect();
-		const db = client.db('csgo-keys').collection('keys');
+		const collection = new Set(fileData);
+		let data = [];
 
-		const data = arr.map((item) => {
-			return { key: item };
-		});
+		attachmentData.forEach((item) => collection.add(item));
+		collection.forEach((item) => data.push(item));
+		data = data.filter((el) => el != '');
 
-		await db.insertMany(data);
+		fs.writeFileSync(filePath, data.join('\n'), async (error) =>
+			console.log(error)
+		);
 
 		await interaction.reply({
-			content: `Добавленные ключи:\n ${response}...`,
+			content: `Added ${attachmentData.filter((el) => el != '').length} keys`,
 			ephemeral: true,
 		});
+
+		setTimeout(async () => {
+			await interaction.deleteReply({ ephemeral: true });
+		}, 5000);
 	} catch (e) {
 		console.dir(e);
 	} finally {
-		await client.close();
 	}
 };
 
