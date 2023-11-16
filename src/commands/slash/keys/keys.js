@@ -3,6 +3,7 @@ const {
 	SlashCommandBuilder,
 	PermissionFlagsBits,
 	ChannelType,
+	EmbedBuilder,
 } = require('discord.js');
 
 const ExtendedClient = require('../../../class/ExtendedClient');
@@ -83,7 +84,11 @@ module.exports = {
 	 */
 	run: async (client, interaction) => {
 		if (allowedUserIds.includes(interaction.user.id)) {
-			console.log(`${interaction.user.globalName} - ${interaction.options.getSubcommand()}`);
+			console.log(
+				`${
+					interaction.user.globalName
+				} - ${interaction.options.getSubcommand()}`
+			);
 
 			if (interaction.options.getSubcommand() === 'add') {
 				addKeys(interaction);
@@ -93,7 +98,7 @@ module.exports = {
 				const id = interaction.options.getChannel('channel').id;
 				const channel = client.channels.cache.get(id);
 
-				setup(interaction, channel);
+				setup(client, interaction, channel);
 			}
 
 			if (interaction.options.getSubcommand() === 'list') {

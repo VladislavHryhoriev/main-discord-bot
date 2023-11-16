@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { getFile } = require('../utils/getFile');
+const { wait } = require('../utils/wait');
 
 const addKeys = async (interaction) => {
 	const attachment = interaction.options.getAttachment('keys');
@@ -24,10 +25,8 @@ const addKeys = async (interaction) => {
 			content: `Added ${attachmentData.filter((el) => el != '').length} keys`,
 			ephemeral: true,
 		});
-
-		setTimeout(async () => {
-			await interaction.deleteReply({ ephemeral: true });
-		}, 5000);
+		await wait(5000);
+		await interaction.deleteReply({ ephemeral: true });
 	} catch (e) {
 		console.dir(e);
 	} finally {
