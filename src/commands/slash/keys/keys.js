@@ -12,6 +12,7 @@ const { addKeys } = require('./options/add');
 const { list } = require('./options/list');
 const { clearKeys } = require('./options/clearKeys');
 const { deleteKey } = require('./utils/deleteKey');
+const { stop } = require('./options/stop');
 
 const allowedUserIds = ['425759039784484898', '324156252081094657'];
 
@@ -70,6 +71,10 @@ module.exports = {
 
 		.addSubcommand((subcommand) =>
 			subcommand.setName('clear').setDescription('Удалить все ключи')
+		)
+
+		.addSubcommand((subcommand) =>
+			subcommand.setName('stop').setDescription('Остановить раздачу')
 		),
 
 	/**
@@ -78,6 +83,8 @@ module.exports = {
 	 */
 	run: async (client, interaction) => {
 		if (allowedUserIds.includes(interaction.user.id)) {
+			console.log(`${interaction.user.globalName} - ${interaction.options.getSubcommand()}`);
+
 			if (interaction.options.getSubcommand() === 'add') {
 				addKeys(interaction);
 			}
@@ -97,9 +104,9 @@ module.exports = {
 				deleteKey(interaction);
 			}
 
-			// if (interaction.options.getSubcommand() === 'deactive') {
-			// 	deactive(interaction);
-			// }
+			if (interaction.options.getSubcommand() === 'stop') {
+				stop(interaction);
+			}
 
 			if (interaction.options.getSubcommand() === 'clear') {
 				clearKeys(interaction);

@@ -6,7 +6,7 @@ const list = async (interaction) => {
 	const textarea = `\`\`\`${fileData.join('\n')}\`\`\``;
 
 	await interaction.reply({
-		content: `Кол-во ключей: ${fileData.length || 0}\n${textarea}`,
+		content: `Кол-во ключей: ${fileData.length - 1 || 0}\n${textarea}`,
 		ephemeral: true,
 	});
 };
